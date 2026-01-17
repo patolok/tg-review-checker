@@ -19,7 +19,13 @@ RUN apt-get update && apt-get install -y \
     libasound2 \
     libxshmfence1 \
     ca-certificates \
+    tzdata \
     && rm -rf /var/lib/apt/lists/*
+
+# Настройка часового пояса (замените Europe/Moscow на ваш, если нужно)
+RUN ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime \
+    && echo "Europe/Moscow" > /etc/timezone \
+    && dpkg-reconfigure -f noninteractive tzdata
 
 # Конфигурация путей к СhromeDriver
 ENV CHROME_BIN=/usr/bin/chromium
