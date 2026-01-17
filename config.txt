@@ -1,0 +1,19 @@
+USERNAME=alexandv
+PASSWORD=password
+PAGE_LOAD_WAIT=15
+CHECK_INTERVAL=180
+BOT_TOKEN=5453675132:AbHjdvlJgI8IfkdlqaCzXhfg5su4YVrZdrw
+USER_ID=6435621344
+
+
+# СПРАВКА:
+
+# --- НАСТРОЙКИ ПЛАТФОРМЫ ---
+# USERNAME - логин платформы
+# PASSWORD - пароль платформы
+# CHECK_INTERVAL - частота опроса платформы на появление/отмены записи к вам на проверку в секундах
+# PAGE_LOAD_WAIT - ожидания прогрузки событий dashboard в секундах, 15 - оптимально
+
+# --- НАСТРОЙКИ TELEGRAM ---
+# BOT_TOKEN - токен тг-бота полученный от @BotFather, не забудьте написать своему боту /start
+# USER_ID - id чата для отправки оповещений, его можно узнать через бота @userinfobot
