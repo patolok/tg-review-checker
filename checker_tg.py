@@ -41,12 +41,35 @@ def load_config(filename="config.txt"):
     return config
 
 
+# --- ВАЛИДАЦИЯ ТОКЕНА ТГ-БОТА ---
+def check_telegram_token():
+    url = f"https://api.telegram.org/bot{BOT_TOKEN}/getMe"
+    try:
+        resp = requests.get(url, timeout=10)
+    except Exception as e:
+        print(f"{RED}Ошибка соединения с Telegram API: {e}{RESET}")
+        sys.exit(1)
+
+    if resp.status_code != 200:
+        print(f"{RED}Неверный Telegram BOT TOKEN! {RESET}")
+        sys.exit(1)
+
+    data = resp.json()
+    if not data.get("ok"):
+        print(f"{RED}Telegram BOT TOKEN не прошёл проверку!{RESET}")
+        sys.exit(1)
+
+    bot_name = data["result"].get("username", "unknown")
+    print(f"{GREEN}Используется Telegram бот @{bot_name} {RESET}")
+
+
 # --- ЗАГРУЗКА НАСТРОЕК ---
 config = load_config()
 USERNAME, PASSWORD, BOT_TOKEN, USER_ID = (
     config.get(k) or sys.exit(f"В config.txt не задано: {k}")
     for k in ("USERNAME", "PASSWORD", "BOT_TOKEN", "USER_ID")
 )
+check_telegram_token()
 CHECK_INTERVAL = int(config.get("CHECK_INTERVAL", 180))
 PAGE_LOAD_WAIT = int(config.get("PAGE_LOAD_WAIT", 15))
 START_URL = "https://platform.21-school.ru/"
@@ -82,7 +105,9 @@ def login():
         WebDriverWait(driver, 20).until(
             EC.presence_of_element_located((By.NAME, "username"))
         )
-    except:
+    except KeyboardInterrupt:
+        raise
+    except Exception:
         print(f"{RED}Ошибка: форма логина не найдена{RESET}")
         return False
 
@@ -121,6 +146,8 @@ def get_events():
                 (By.CSS_SELECTOR, "[data-testid='components.Agenda.WidgetAgenda']")
             )
         )
+    except KeyboardInterrupt:
+        raise
     except Exception:
         return None
 
@@ -181,23 +208,25 @@ def get_events():
 # --- ОСНОВНОЙ ЦИКЛ ---
 print("Скрипт запущен. Проверка каждые", CHECK_INTERVAL, "секунд.")
 
-if not login():
-    sys.exit(1)
-
-old_events = get_events()
-if old_events is None:
-    print("Не удалось получить список событий при запуске.")
-    sys.exit(1)
-
-print("\nТекущие события:")
-for ev in old_events:
-    print(" •", ev)
-if old_events:
-    send_telegram("📋 Текущие события:\n" + "\n".join(f"• {ev}" for ev in old_events))
-else:
-    send_telegram("📋 На данный момент событий нет.")
-
 try:
+    if not login():
+        sys.exit(1)
+
+    old_events = get_events()
+    if old_events is None:
+        print("Не удалось получить список событий при запуске.")
+        sys.exit(1)
+
+    print("\nТекущие события:")
+    for ev in old_events:
+        print(" •", ev)
+    if old_events:
+        send_telegram(
+            "📋 Текущие события:\n" + "\n".join(f"• {ev}" for ev in old_events)
+        )
+    else:
+        send_telegram("📋 На данный момент событий нет.")
+
     while True:
         now = datetime.now().strftime("%H:%M")
         print(f"\n[{now}] 🔎 Проверка")
