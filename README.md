@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.jpeg" alt="Project Logo" width="300">
+  <img src="logo.jpg" alt="Project Logo" width="300">
 </p>
 
 # School 21 Slot Checker with Telegram Notifications
