@@ -51,6 +51,22 @@ USER_ID=123456789
 
 ---
 
+## Time Zone Configuration 🕒
+
+The Docker container is configured to use the **Europe/Moscow** time zone by default.
+
+In the `Dockerfile` you will find:
+
+```dockerfile
+RUN ln -sf /usr/share/zoneinfo/Europe/Moscow /etc/localtime \
+    && echo "Europe/Moscow" > /etc/timezone \
+    && dpkg-reconfigure -f noninteractive tzdata
+```
+
+If you are in a different time zone, **change it manually** in the `Dockerfile` **before building the image**.
+
+---
+
 ## 🐳 Docker Setup
 
 ### Install Docker on Ubuntu
